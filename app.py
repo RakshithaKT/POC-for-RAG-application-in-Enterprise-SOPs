@@ -5,11 +5,10 @@ from chromadb.utils.data_loaders import ImageLoader
 from groq import Groq
 import base64
 import os
-from PIL import Image
+from PIL import Image 
+from dotenv import load_dotenv
 
-# ----------------------------------------------------
-# 1. Page Configuration & Setup
-# ----------------------------------------------------
+load_dotenv()
 st.set_page_config(
     page_title="Multimodal Research RAG",
     page_icon="🔬",
@@ -19,23 +18,19 @@ st.set_page_config(
 st.title("🔬 Multimodal Research Assistant")
 st.write("Query your research papers visually using OpenCLIP embeddings and Llama 3.2 Vision via Groq.")
 
-# Sidebar for configuration
-st.sidebar.header("Configuration")
-groq_api_key = st.sidebar.text_input("Enter Groq API Key:", type="password")
 
-# Ensure API Key is set
+st.sidebar.header("Configuration")
+
+groq_api_key = os.getenv("GROQ_API_KEY")
+
 if groq_api_key:
-    os.environ["GROQ_API_KEY"] = groq_api_key
     groq_client = Groq()
 else:
     st.sidebar.warning("Please enter your Groq API key to enable text generation.")
 
-# ----------------------------------------------------
-# 2. Database Connections (Cached for speed)
-# ----------------------------------------------------
+
 @st.cache_resource
 def init_chroma():
-    # Points to the local folder you unzipped
     client = chromadb.PersistentClient(path="./chroma_db")
     embedding_function = OpenCLIPEmbeddingFunction()
     image_loader = ImageLoader()
@@ -53,14 +48,12 @@ try:
 except Exception as e:
     st.sidebar.error(f"Failed to load ChromaDB. Ensure 'chroma_db' folder is in your root directory. Error: {e}")
 
-# Helper function to convert retrieved images for Groq payload
+
 def encode_image_base64(image_path):
     with open(image_path, "rb") as img_file:
         return base64.b64encode(img_file.read()).decode('utf-8')
 
-# ----------------------------------------------------
-# 3. Main UI & RAG Pipeline
-# ----------------------------------------------------
+
 user_query = st.text_input("Ask a question about your research papers (e.g., 'Show me the graph on revenue trends'):")
 
 if user_query:
@@ -80,7 +73,7 @@ if user_query:
             uris = results['uris'][0]
             metadatas = results['metadatas'][0]
             
-            # --- Layout Split ---
+            # Layout Split 
             col1, col2 = st.columns([1, 1])
             
             with col1:

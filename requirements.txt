@@ -4,4 +4,5 @@ open-clip-torch==2.24.0
 torch==2.2.1
 torchvision==0.17.1
 pillow==10.2.0
-groq==0.4.2
+groq==0.4.2 
+python-dotenv==1.0.1
