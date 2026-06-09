@@ -6,3 +6,4 @@ torchvision==0.17.1
 pillow==10.2.0
 groq==0.4.2 
 python-dotenv==1.0.1
+httpx==0.27.2
